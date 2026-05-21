@@ -46,7 +46,10 @@ struct TaskList {
 
 impl TaskList {
     fn load() -> Self {
-        let mut file = match File::open("Tasks.json") {
+        let home_dir = std::env::var("HOME").unwrap();
+        let file_path = format!("{home_dir}/.tasks.json");
+        
+        let mut file = match File::open(file_path) {
             Ok(f) => f,
             Err(_) => return TaskList { tasks: Vec::new() }
         };
@@ -61,7 +64,9 @@ impl TaskList {
     }
 
     fn save(&self) {
-        let mut file = File::create("Tasks.json").expect("Failed to create file");
+        let home_dir = std::env::var("HOME").unwrap();
+        let file_path = format!("{home_dir}/.tasks.json");
+        let mut file = File::create(file_path).expect("Failed to create file");
 
         let json_string = serde_json::to_string_pretty(&self.tasks).expect("Failed to write file");
 
